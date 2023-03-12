@@ -1,8 +1,5 @@
 @echo off
 
-
-call conda activate py310
-
 echo.
 echo Loading azd .env file from current environment
 echo.
