@@ -11,6 +11,13 @@ from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
 from lookuptool import CsvLookupTool
 
+# 質問に対して、どのような情報が欠けているのかを確認するために、質問を繰り返し評価し、すべての情報が揃ったところで、回答を作成することを試みる。
+# 各反復は 2 つの部分で構成されています。
+# 1 つ目は GPT を使ってより多くの情報が必要かどうかを確認し、2 つ目はより多くのデータが必要な場合、要求された「ツール」を使ってそれを取得することです。
+# GPT の最後の呼び出しは、実際の質問に答えるものです。
+# これはMKRL論文[1]に触発され、Langchain の実装を使ってここで適用されています。
+# [1] E. Karpas, et al. arXiv:2205.00445
+
 # Attempt to answer questions by iteratively evaluating the question to see what information is missing, and once all information
 # is present then formulate an answer. Each iteration consists of two parts: first use GPT to see if we need more information, 
 # second if more data is needed use the requested "tool" to retrieve it. The last call to GPT answers the actual question.
@@ -19,15 +26,14 @@ from lookuptool import CsvLookupTool
 class ReadRetrieveReadApproach(Approach):
 
     template_prefix = \
-"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " \
-"Answer the question using only the data provided in the information sources below. " \
-"Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. " \
-"For example, if the question is \"What color is the sky?\" and one of the information sources says \"info123: the sky is blue whenever it's not cloudy\", then answer with \"The sky is blue [info123]\" " \
-"It's important to strictly follow the format where the name of the source is in square brackets at the end of the sentence, and only up to the prefix before the colon (\":\"). " \
-"If there are multiple sources, cite each one in their own square brackets. For example, use \"[info343][ref-76]\" and not \"[info343,ref-76]\". " \
-"Never quote tool names as sources." \
-"If you cannot answer using the sources below, say that you don't know. " \
-"\n\nYou can access to the following tools:"
+"あなたは日本の歴史に関する質問をサポートする教師アシスタントです。" \
+"以下の情報源に記載されているデータのみを用いて、質問に答えてください。" \
+"各ソースには、名前の後にコロンと実際のデータがあり、レスポンスで使用する各データのソース名を引用します。" \
+"例えば、質問が「空の色は何色ですか」というもので、ソースの1つに「info-123.txt:空は曇っていないときはいつでも青い」と書いてあれば、「空は青い [info-123.txt]」と答えればよいのです。" \
+"各出典元には、名前の後にコロンと実際の情報があり、回答で使用する各事実には必ず出典名を記載してください。ソースを参照するには、四角いブラケットを使用します。例えば、[info1.txt]です。出典を組み合わせず、各出典を別々に記載すること。例えば、[info1.txt][info2.pdf] など。" \
+"ツール名をソースとして引用することは絶対に避けてください。" \
+"以下の資料で答えられない場合は、「わからない」と答えてください。" \
+"\n\n以下のツールにアクセスすることができます:"
     
     template_suffix = """
 Begin!
@@ -36,7 +42,7 @@ Question: {input}
 
 Thought: {agent_scratchpad}"""    
 
-    CognitiveSearchToolDescription = "useful for searching the Microsoft employee benefits information such as healthcare plans, retirement plans, etc."
+    CognitiveSearchToolDescription = "日本の歴史情報の検索に便利です。"
 
     def __init__(self, search_client: SearchClient, openai_deployment: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
@@ -54,8 +60,8 @@ Thought: {agent_scratchpad}"""
             r = self.search_client.search(q,
                                           filter=filter, 
                                           query_type=QueryType.SEMANTIC, 
-                                          query_language="en-us", 
-                                          query_speller="lexicon", 
+                                          query_language="ja-jp", 
+                                          query_speller="none", 
                                           semantic_configuration_name="default", 
                                           top = top,
                                           query_caption="extractive|highlight-false" if use_semantic_captions else None)
@@ -64,7 +70,8 @@ Thought: {agent_scratchpad}"""
         if use_semantic_captions:
             self.results = [doc[self.sourcepage_field] + ":" + nonewlines(" -.- ".join([c.text for c in doc['@search.captions']])) for doc in r]
         else:
-            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:250]) for doc in r]
+            #self.results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:250]) for doc in r]
+            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field]) for doc in r]
         content = "\n".join(self.results)
         return content
         
@@ -77,7 +84,9 @@ Thought: {agent_scratchpad}"""
         cb_manager = CallbackManager(handlers=[cb_handler])
         
         acs_tool = Tool(name = "CognitiveSearch", func = lambda q: self.retrieve(q, overrides), description = self.CognitiveSearchToolDescription)
-        employee_tool = EmployeeInfoTool("Employee1")
+        #hana debug 今回はテストのため、引数を源範頼に固定しています
+        #lookup するためのキーワードの生成方法は、別途考える必要があります
+        employee_tool = EmployeeInfoTool("源範頼")
         tools = [acs_tool, employee_tool]
 
         prompt = ZeroShotAgent.create_prompt(
@@ -85,6 +94,7 @@ Thought: {agent_scratchpad}"""
             prefix=overrides.get("prompt_template_prefix") or self.template_prefix,
             suffix=overrides.get("prompt_template_suffix") or self.template_suffix,
             input_variables = ["input", "agent_scratchpad"])
+        print(prompt)
         llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
         chain = LLMChain(llm = llm, prompt = prompt)
         agent_exec = AgentExecutor.from_agent_and_tools(
@@ -103,7 +113,8 @@ class EmployeeInfoTool(CsvLookupTool):
     employee_name: str = ""
 
     def __init__(self, employee_name: str):
-        super().__init__(filename = "data/employeeinfo.csv", key_field = "name", name = "Employee", description = "useful for answering questions about the employee, their benefits and other personal information")
+        #hana debug デモのためにサンプルで武将ゆかりの地にあるカフェのデータセットを用意しています
+        super().__init__(filename = "data/restaurantinfo.csv", key_field = "name", name = "源範頼", description = "ゆかりの地にあるカフェに関する質問に答えるのに便利です。")
         self.func = self.employee_info
         self.employee_name = employee_name
 

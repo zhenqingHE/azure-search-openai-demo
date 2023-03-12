@@ -25,12 +25,17 @@ KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
 KB_FIELDS_SOURCEPAGE = os.environ.get("KB_FIELDS_SOURCEPAGE") or "sourcepage"
 
+#hana debug
+#環境変数で指定してもいいですがめんどくさいのでこっちに直書きしてデバッグしてます。
+AZURE_SEARCH_INDEX = "azureblob-index"
+KB_FIELDS_SOURCEPAGE = "metadata_storage_name"
+
 # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed, 
 # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the 
 # keys for each service
 # If you encounter a blocking error during a DefaultAzureCredntial resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
-azure_credential = DefaultAzureCredential()
-
+#azure_credential = DefaultAzureCredential()
+azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
 # Used by the OpenAI SDK
 openai.api_type = "azure"
 openai.api_base = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"

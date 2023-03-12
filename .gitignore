@@ -144,3 +144,5 @@ cython_debug/
 npm-debug.log*
 node_modules
 static/
+
+output/
