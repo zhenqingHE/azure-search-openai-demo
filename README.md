@@ -7,12 +7,12 @@
 
 ![RAG Architecture](docs/appcomponents.png)
 
-## Features
+## 機能
 
-* Chat and Q&A interfaces
-* Explores various options to help users evaluate the trustworthiness of responses with citations, tracking of source content, etc.
-* Shows possible approaches for data preparation, prompt construction, and orchestration of interaction between model (ChatGPT) and retriever (Cognitive Search)
-* Settings directly in the UX to tweak the behavior and experiment with options
+* チャット、Q&A インターフェース
+* 引用、ソースコンテンツの追跡など、ユーザが回答の信頼性を評価するための様々な選択肢を検討する。
+* データ準備、プロンプト作成、モデル（ChatGPT）と Retriever（Azure Cognitive Search）間の連携のための可能なアプローチを示すことができる。
+* UX で直接設定することで、動作の調整やオプションの実験が可能です。
 
 ![Chat screen](docs/chatscreen.png)
 
@@ -23,8 +23,9 @@
 ### 前提条件
 
 - Azure Developer CLI (install from [here](https://aka.ms/azure-dev/install))
-- Python 3.10系 (install from [here](https://www.python.org/downloads/))
-    - **Imporant**: Python とpip パッケージマネージャは、セットアップスクリプトを動作させるために、Windows のパスに含まれている必要があります。
+- Python 3.10 系 (install from [here](https://www.python.org/downloads/))
+    - **重要**: Python とpip パッケージマネージャは、セットアップスクリプトを動作させるために、Windows のパスに含まれている必要があります。
+    - Anaconda で仮想環境を作ることをお勧めします。`conda create -n py310 python=3.10 anaconda`
 - Node.js v18.13.0 動作確認済 (install from [here](https://nodejs.org/en/download/))
 - Git (install from [here](https://git-scm.com/downloads))
 - Powershell (pwsh) (install from [here](https://github.com/powershell/powershell))
@@ -50,7 +51,7 @@
     ```
     ? Please enter a new environment name: 任意の環境名
     ? Please select an Azure Subscription to use: 自分のサブスクリプション名
-    ? Please select an Azure location to use: 40. デプロイ先リージョン(East US 推奨)
+    ? Please select an Azure location to use: デプロイ先リージョン(East US 推奨)
     ```
 
     - **重要**: 本サンプルで使用しているモデルを現在サポートしているリージョンは、米国東部(East US)または米国南中部(South Central US)です。最新のリージョン・モデル一覧は[こちら](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models)をご確認ください。
