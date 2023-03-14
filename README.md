@@ -1,8 +1,9 @@
 # ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
+## 日本語カスタマイズ版
 
-This sample demonstrates a few approaches for creating ChatGPT-like experiences over your own data using the Retrieval Augmented Generation pattern. It uses Azure OpenAI Service to access the ChatGPT model (gpt-35-turbo), and Azure Cognitive Search for data indexing and retrieval.
+このサンプルでは、Retrieval Augmented Generation パターンを使用して、独自のデータに対してChatGPT のような体験を作成するためのいくつかのアプローチを示しています。ChatGPT モデル（gpt-35-turbo）にアクセスするために Azure OpenAI Service を使用し、データのインデックス作成と検索に Azure Cognitive Search を使用しています。
 
-The repo includes sample data so it's ready to try end to end. In this sample application we use a fictitious company called Contoso Electronics, and the experience allows its employees to ask questions about the benefits, internal policies, as well as job descriptions and roles.
+レポジトリにはサンプルデータが含まれているので、すぐに End-to-End で試すことができます。このサンプルアプリケーションでは、日本の鎌倉時代の武将に関する Wikipedia データが含まれており、鎌倉幕府や武将について質問できるような体験ができます。
 
 ![RAG Architecture](docs/appcomponents.png)
 
@@ -15,44 +16,68 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 ![Chat screen](docs/chatscreen.png)
 
-## Getting Started
+## Getting Started 日本語カスタマイズ版構築手順
 
-> **IMPORTANT:** In order to deploy and run this example, you'll need an **Azure subscription with access enabled for the Azure OpenAI service**. You can request access [here](https://aka.ms/oaiapply).
+> **重要:** このサンプルをデプロイして実行するには、 **Azure OpenAI Service へのアクセスを有効にした** Azure サブスクリプションが必要です。アクセスは[こちら](https://aka.ms/oaiapply)からリクエストできます。
 
-### Prerequisites
+### 前提条件
 
 - Azure Developer CLI (install from [here](https://aka.ms/azure-dev/install))
-- Python (install from [here](https://www.python.org/downloads/))
-    - **Imporant**: Python and the pip package manager must in the path in Windows for the setup scripts to work.
-- Node.js (install from [here](https://nodejs.org/en/download/))
+- Python 3.10系 (install from [here](https://www.python.org/downloads/))
+    - **Imporant**: Python とpip パッケージマネージャは、セットアップスクリプトを動作させるために、Windows のパスに含まれている必要があります。
+- Node.js v18.13.0 動作確認済 (install from [here](https://nodejs.org/en/download/))
 - Git (install from [here](https://git-scm.com/downloads))
 - Powershell (pwsh) (install from [here](https://github.com/powershell/powershell))
-   - **Imporant**: Ensure you can run pwsh.exe from a PowerShell command. If this fails, you likely need to upgrade PowerShell.
+   - **重要**: PowerShell コマンドから pwsh.exe を実行できることを確認する。失敗した場合は、PowerShell のアップグレードが必要な可能性があります。
 
-### Installation
+### インストール
 
-Starting from scratch:
-1. Create a new folder and switch to it in the terminal
-2. Run "azd up -t azure-search-openai-demo"
-    * For the target location, the regions that currently support the models used in this sample are East US or South Central US. For an up-to-date list of regions and models, check [here](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/models)
+1. このレポジトリをダウンロードするか、`git clone` して `/azure-search-openai-demo` に移動します。
+1. PowerShell を起動して、Azure にログインします。さらにデフォルトのサブスクリプションをセットしておきます。
+    ```ps
+    az login
+    az account set --subscription <Your Subscription ID>
+    ```
+1. 以下を実行し、自分の Azure AD のオブジェクト ID を控えておきます。
+    ```ps
+    az ad signed-in-user show --query id --out tsv
+    ```
+1. 以下の Azure Developer CLI コマンドで環境を作成し、自動デプロイを開始します。
+    ```ps
+    azd up
+    ```
+    以下の 3 つの質問に答えてください。Initializing a new project (azd init)
+    ```
+    ? Please enter a new environment name: 任意の環境名
+    ? Please select an Azure Subscription to use: 自分のサブスクリプション名
+    ? Please select an Azure location to use: 40. デプロイ先リージョン(East US 推奨)
+    ```
 
-Deploying or re-deploying a local clone of the repo:
-* Simply run "azd up"
+    - **重要**: 本サンプルで使用しているモデルを現在サポートしているリージョンは、米国東部(East US)または米国南中部(South Central US)です。最新のリージョン・モデル一覧は[こちら](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models)をご確認ください。
+1. **Creating/Updating resources** が表示されたら <kbd>Ctrl</kbd> + <kbd>C</kbd> を押下して、実行を中断します。
+1. ディレクトリに生成された `.azure/環境名/.env` の `AZURE_PRINCIPAL_ID` の値を、事前に控えておいた自分のオブジェクト ID に書き換えて、再び `azd up` コマンドを実行します。※ここは公式のサンプルでバグ修正中です。
+1. 以下 3 つのリソースがデプロイ完了してしばらく待ちます。結構時間がかかります。
+    ```
+    (✓) Done: Resource group: rg-環境名
+    (✓) Done: App Service plan: plan-randam123
+    (✓) Done: Storage account: strandam123
+    ```
 
-Running locally:
-* Run `./app/start.cmd` or run the "VS Code Task: Start App" to start the project locally.
+ローカルで実行:
+* `./app/start.cmd` を実行するか、"VS Code Task: Start App" を実行し、プロジェクトをローカルに起動します。
 
-** AZURE RESOURCE COSTS ** by default this sample will create Azure App Service and Azure Cognitive Search resources that have a monthly cost. You can switch them to free versions of each of them if you want to avoid this cost by changing the parameters file under the infra folder (though there are some limits to consider; for example, you can have up to 1 free Cognitive Search resource per subscription.)
+- **重要**: **AZURE RESOURCE COSTS** デフォルトでは、このサンプルは月額費用が発生する Azure App Service と Azure Cognitive Search リソースを作成します。このコストを回避したい場合は、infra フォルダ下のパラメータファイルを変更することで、それぞれを無料版に切り替えることができます (ただし、考慮すべき制限があります。たとえば、無料の Cognitive Search リソースは、1 つのサブスクリプションにつき最大 1 つまでです。)。
 
 ### Quickstart
 
-* In Azure: navigate to the Azure WebApp deployed by azd. The URL is printed out when azd completes (as "Endpoint"), or you can find it in the Azure portal.
-* Running locally: navigate to 127.0.0.1:5000
+* Azureの場合：azd によってデプロイされた Azure WebApp を開いてください。URL はazd の完了時に出力される（「Endpoint」として）か、Azure ポータルで確認することができます。このリソースが不要であれば、停止や削除ができます。
+* ローカルで実行: ブラウザで 127.0.0.1:5000 を開きます。
 
-Once in the web app:
-* Try different topics in chat or Q&A context. For chat, try follow up questions, clarifications, ask to simplify or elaborate on answer, etc.
-* Explore citations and sources
-* Click on "settings" to try different options, tweak prompts, etc.
+ウェブアプリでは、
+* チャットや Q&A のコンテキストで、さまざまなトピックを試してみましょう。チャットでは、フォローアップの質問、明確化、回答の簡略化または詳細化を求めるなど、さまざまなことを試してみてください。
+* 引用とソースの探索
+* 「設定」をクリックすると、さまざまなオプションを試したり、プロンプトを調整したりすることができます。
+
 
 ## Resources
 
