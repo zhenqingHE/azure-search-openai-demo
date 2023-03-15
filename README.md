@@ -60,9 +60,9 @@
 1. 以下のリソースがデプロイ完了するまでしばらく待ちます。結構時間がかかります。
     ```
     (✓) Done: Resource group: rg-環境名
-    (✓) Done: App Service plan: plan-randam123
-    (✓) Done: Storage account: strandam123
-    (✓) Done: App Service: app-backend-randam123
+    (✓) Done: App Service plan: plan-random123
+    (✓) Done: Storage account: strandom123
+    (✓) Done: App Service: app-backend-random123
     ```
 
 ローカルで実行:
