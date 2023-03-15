@@ -11,7 +11,7 @@
 
 * チャット、Q&A インターフェース
 * 引用、ソースコンテンツの追跡など、ユーザが回答の信頼性を評価するための様々な選択肢を検討する。
-* データ準備、プロンプト作成、モデル（ChatGPT）と Retriever（Azure Cognitive Search）間の連携のための可能なアプローチを示すことができる。
+* データ準備、プロンプト作成、モデル（ChatGPT）と Retriever(Azure Cognitive Search) 間の連携のための可能なアプローチを示すことができる。
 * UX で直接設定することで、動作の調整やオプションの実験が可能です。
 
 ![Chat screen](docs/chatscreen.png)
@@ -37,7 +37,7 @@
 1. PowerShell を起動して、Azure にログインします。さらにデフォルトのサブスクリプションをセットしておきます。
     ```ps
     az login
-    az account set --subscription <Your Subscription ID>
+    az account set --subscription [Your Subscription ID]
     ```
 1. 以下を実行し、自分の Azure AD のオブジェクト ID を控えておきます。
     ```ps
@@ -57,17 +57,18 @@
     - **重要**: 本サンプルで使用しているモデルを現在サポートしているリージョンは、米国東部(East US)または米国南中部(South Central US)です。最新のリージョン・モデル一覧は[こちら](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models)をご確認ください。
 1. **Creating/Updating resources** が表示されたら <kbd>Ctrl</kbd> + <kbd>C</kbd> を押下して、実行を中断します。
 1. ディレクトリに生成された `.azure/環境名/.env` の `AZURE_PRINCIPAL_ID` の値を、事前に控えておいた自分のオブジェクト ID に書き換えて、再び `azd up` コマンドを実行します。※ここは公式のサンプルでバグ修正中です。
-1. 以下 3 つのリソースがデプロイ完了してしばらく待ちます。結構時間がかかります。
+1. 以下のリソースがデプロイ完了するまでしばらく待ちます。結構時間がかかります。
     ```
     (✓) Done: Resource group: rg-環境名
     (✓) Done: App Service plan: plan-randam123
     (✓) Done: Storage account: strandam123
+    (✓) Done: App Service: app-backend-randam123
     ```
 
 ローカルで実行:
 * `./app/start.cmd` を実行するか、"VS Code Task: Start App" を実行し、プロジェクトをローカルに起動します。
 
-- **重要**: **AZURE RESOURCE COSTS** デフォルトでは、このサンプルは月額費用が発生する Azure App Service と Azure Cognitive Search リソースを作成します。このコストを回避したい場合は、infra フォルダ下のパラメータファイルを変更することで、それぞれを無料版に切り替えることができます (ただし、考慮すべき制限があります。たとえば、無料の Cognitive Search リソースは、1 つのサブスクリプションにつき最大 1 つまでです。)。
+- **重要**: **AZURE RESOURCE COSTS** デフォルトでは、このサンプルは月額費用が発生する Azure App Service と Azure Cognitive Search リソースを作成します。このコストを回避したい場合は、infra フォルダ下のパラメータファイルを変更することで、それぞれを無料版に切り替えることができます (ただし、考慮すべき制限があります。たとえば、無料の Cognitive Search リソースは、1 つのサブスクリプションにつき最大 1 つまでです)。
 
 ### Quickstart
 
