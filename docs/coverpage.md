@@ -8,7 +8,7 @@
 
 
 [Get Started](#main)
-[GitHub](https://github.com/asashiho/openai-workshop)
+[GitHub](https://github.com/asashiho/azure-search-openai-demo)
 
 
 <!-- background color -->
