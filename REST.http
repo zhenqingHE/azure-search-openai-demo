@@ -1,0 +1,48 @@
+@backend = https://app-backend-xxxx.azurewebsites.net
+###
+
+
+###
+POST {{backend}}/ask HTTP/1.1
+content-type: application/json
+
+{
+    "approach": "rtr", 
+    "question": "水素ハイブリット電車における水素供給システムついて教えてください。"
+}
+
+###
+POST {{backend}}/ask HTTP/1.1
+content-type: application/json
+
+{
+    "approach": "rtr", 
+    "question": "私は鉄道会社に勤める技術者です。水素ハイブリット電車における水素供給システムついて箇条書きで教えてください。"
+}
+
+
+###
+API Managementの動作確認
+###
+
+@apimanagement = https://apim-xxxx.azure-api.net
+###
+POST {{apimanagement}}/api/ask HTTP/1.1
+Content-Type: application/json
+
+{
+    "approach": "rtr", 
+    "question": "水素ハイブリット電車における水素供給システムついて教えてください。"
+}
+
+
+
+###
+POST {{apimanagement}}/api/ask HTTP/1.1
+Content-Type: application/json
+Ocp-Apim-Subscription-Key: xxxxxxxxxx
+
+{
+    "approach": "rtr", 
+    "question": "水素ハイブリット電車における水素供給システムついて教えてください。"
+}
