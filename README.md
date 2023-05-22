@@ -1,4 +1,4 @@
-# 業務データを活用したAIチャットシステム ワークショップ
+# 業務データを活用したAIチャット ワークショップ
 
 このリポジトリは業務データを活用したAIチャットシステムを構築するためのワークショップ資料です。
 [ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search - 日本語カスタマイズ版 /@nohanaga](https://github.com/nohanaga/azure-search-openai-demo) をベースに作成しています。
@@ -6,7 +6,7 @@
 ワークショップ資料は[こちら]()
 
 ---
-### ワークショップ概要
+## ワークショップ概要
 
  <span style="font-weight: bold; color: steelblue;"> 研究論文のサマリー/アジェンダを作成するチャットシステム</span> の作成を通して、Azure OpenAI Service やAzure Cognitive Searchなどの使い方やチャットシステムを社内に展開するためのWebアプリケーションの作成やAPI基盤の整備などの基礎を学びます。
 
