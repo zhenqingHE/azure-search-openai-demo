@@ -1,5 +1,8 @@
 targetScope = 'subscription'
 
+@description('Id of the user or app to assign application roles')
+param principalId string
+
 @minLength(1)
 @maxLength(64)
 @description('Name of the the environment which is used to generate a short unique hash used in all resources.')
@@ -9,34 +12,58 @@ param environmentName string
 @description('Primary location for all resources')
 param location string
 
-param cognitiveServicesAccountName string = ''
-param cognitiveServicesSkuName string = 'S0'
-param appServicePlanName string = ''
+@description('The email address of the owner of the service')
+@minLength(1)
+param publisherEmail string
+
+@description('The name of the owner of the service')
+@minLength(1)
+param publisherName string
+
 param resourceGroupName string = ''
+
+param apiManagementName string = ''
+
+param appServicePlanName string = ''
 param backendServiceName string = ''
+
 param searchServicesName string = ''
 param searchServicesSkuName string = 'standard'
 param storageAccountName string = ''
 param containerName string = 'content'
 param searchIndexName string = 'gptkbindex'
+
+param cognitiveServicesAccountName string = ''
+param cognitiveServicesSkuName string = 'S0'
 param gptDeploymentName string = 'davinci'
 param gptModelName string = 'text-davinci-003'
 param chatGptDeploymentName string = 'chat'
 param chatGptModelName string = 'gpt-35-turbo'
 
-@description('Id of the user or app to assign application roles')
-param principalId string = ''
-
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
-var tags = { 'azd-env-name': environmentName }
+var tags = { 'env-name': environmentName }
 
 // Organize resources in a resource group
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
-  name: !empty(resourceGroupName) ? resourceGroupName : '${abbrs.resourcesResourceGroups}${environmentName}'
+  name: !empty(resourceGroupName) ? resourceGroupName : '${environmentName}'
   location: location
   tags: tags
 }
+
+// Create an API Managament
+module apimanagement 'core/api/apimanagement.bicep' = {
+  name: 'apimanagement'
+  scope: rg
+  params: {
+    name: !empty(apiManagementName) ? apiManagementName : '${abbrs.apiManagementService}${resourceToken}'
+    publisherEmail: publisherEmail
+    publisherName: publisherName
+    location: location
+    tags: tags
+  }
+}
+
 
 // Create an App Service Plan to group applications under the same payment plan and SKU
 module appServicePlan 'core/host/appserviceplan.bicep' = {
@@ -54,14 +81,14 @@ module appServicePlan 'core/host/appserviceplan.bicep' = {
   }
 }
 
-// The application frontend
+// create a Web Apps for backend for backend apps
 module backend 'core/host/appservice.bicep' = {
   name: 'web'
   scope: rg
   params: {
     name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesAppService}backend-${resourceToken}'
     location: location
-    tags: union(tags, { 'azd-service-name': 'backend' })
+    tags: union(tags, { 'service-name': 'backend' })
     appServicePlanId: appServicePlan.outputs.id
     runtimeName: 'python'
     runtimeVersion: '3.10'
@@ -240,6 +267,7 @@ module searchRoleBackend 'core/security/role.bicep' = {
     principalType: 'ServicePrincipal'
   }
 }
+
 
 output AZURE_LOCATION string = location
 output AZURE_OPENAI_SERVICE string = cognitiveServices.outputs.name
