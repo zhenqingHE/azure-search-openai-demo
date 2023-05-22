@@ -34,12 +34,11 @@ Azure OpenAI Serviceについての技術詳細は、以下を参照してくだ
 
 * [ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search](https://github.com/nohanaga/azure-search-openai-demo)
 
-* [Azure OpenAI Developers セミナー](https://www.youtube.com/watch?v=tFgqdHKsOME)
-<iframe width="560" height="315" src="https://www.youtube.com/embed/tFgqdHKsOME" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+* [Azure で ChatGPT × Cognitive Search を使ったエンタープライズサーチを実現](https://qiita.com/nohanaga/items/803c09b5a3a4e2d1776f)
 
+[![Azure OpenAI Developers セミナー](docs/images/movietitle1.png)](https://www.youtube.com/watch?v=tFgqdHKsOME)
 
-* [『ChatGPTによって描かれる未来とAI開発の変遷』日本マイクロソフト株式会社 蒲生 弘郷氏](https://www.youtube.com/watch?v=l9fpxtz22JU) 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/l9fpxtz22JU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><br>
+[![『ChatGPTによって描かれる未来とAI開発の変遷』日本マイクロソフト株式会社 蒲生 弘郷氏](docs/images/movietitle2.png)](https://www.youtube.com/watch?v=l9fpxtz22JU)
 
 
 ## Resources
