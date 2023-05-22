@@ -1,86 +1,45 @@
-# ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
-## 日本語カスタマイズ版
+# 業務データを活用したAIチャットシステム ワークショップ
 
-このサンプルでは、Retrieval Augmented Generation パターンを使用して、独自のデータに対してChatGPT のような体験を作成するためのいくつかのアプローチを示しています。ChatGPT モデル（gpt-35-turbo）にアクセスするために Azure OpenAI Service を使用し、データのインデックス作成と検索に Azure Cognitive Search を使用しています。
+このリポジトリは業務データを活用したAIチャットシステムを構築するためのワークショップ資料です。
+[ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search - 日本語カスタマイズ版 /@nohanaga](https://github.com/nohanaga/azure-search-openai-demo) をベースに作成しています。
 
-レポジトリにはサンプルデータが含まれているので、すぐに End-to-End で試すことができます。このサンプルアプリケーションでは、日本の鎌倉時代の武将に関する Wikipedia データが含まれており、鎌倉幕府や武将について質問できるような体験ができます。
+ワークショップ資料は[こちら]()
 
-![RAG Architecture](docs/appcomponents.png)
+---
+### ワークショップ概要
 
-## 機能
+ <span style="font-weight: bold; color: steelblue;"> 研究論文のサマリー/アジェンダを作成するチャットシステム</span> の作成を通して、Azure OpenAI Service やAzure Cognitive Searchなどの使い方やチャットシステムを社内に展開するためのWebアプリケーションの作成やAPI基盤の整備などの基礎を学びます。
 
-* チャット、Q&A インターフェース
-* 引用、ソースコンテンツの追跡など、ユーザが回答の信頼性を評価するための様々な選択肢を検討する。
-* データ準備、プロンプト作成、モデル（ChatGPT）と Retriever(Azure Cognitive Search) 間の連携のための可能なアプローチを示すことができる。
-* UX で直接設定することで、動作の調整やオプションの実験が可能です。
+このワークショップの特徴は次の2つです。
 
-![Chat screen](docs/chatscreen.png)
+- **専門用語や業界独自のナレッジを検索できる**
 
-## Getting Started 日本語カスタマイズ版構築手順
+ChatGPT(gpt-35-turbo)モデルでトレーニングされたデータに基づいてテキストを生成するのではなく、企業内に閉じたデータのみから生成します
 
-> **重要:** このサンプルをデプロイして実行するには、 **Azure OpenAI Service へのアクセスを有効にした** Azure サブスクリプションが必要です。アクセスは[こちら](https://aka.ms/oaiapply)からリクエストできます。
+- **回答の根拠を明確にする**
 
-### 前提条件
+ChatGPTの回答に「引用」をテキストに付加することで信頼できる応答を生成します
 
-- Azure Developer CLI (install from [here](https://aka.ms/azure-dev/install))
-- Python 3.10 系 (install from [here](https://www.python.org/downloads/))
-    - **重要**: Python とpip パッケージマネージャは、セットアップスクリプトを動作させるために、Windows のパスに含まれている必要があります。
-    - Anaconda で仮想環境を作ることをお勧めします。`conda create -n py310 python=3.10 anaconda`
-- Node.js v18.13.0 動作確認済 (install from [here](https://nodejs.org/en/download/))
-- Git (install from [here](https://git-scm.com/downloads))
-- Powershell (pwsh) (install from [here](https://github.com/powershell/powershell))
-   - **重要**: PowerShell コマンドから pwsh.exe を実行できることを確認する。失敗した場合は、PowerShell のアップグレードが必要な可能性があります。
+![](docs/images/workshop-overview.png)
+![](docs/images/swa23.png)
+![](docs/images/swa26.png)
 
-### インストール
+### 対象者
+このワークショップは、AI技術に興味のあるデータサイエンティスト、エンジニア、研究者、または企業内での情報アクセスやナレッジ共有の改善を目指す方々に適しています。
 
-1. このレポジトリをダウンロードするか、`git clone` して `/azure-search-openai-demo` に移動します。
-1. PowerShell を起動して、Azure にログインします。さらにデフォルトのサブスクリプションをセットしておきます。
-    ```ps
-    az login
-    az account set --subscription [Your Subscription ID]
-    ```
-1. 以下を実行し、自分の Azure AD のオブジェクト ID を控えておきます。
-    ```ps
-    az ad signed-in-user show --query id --out tsv
-    ```
-1. 以下の Azure Developer CLI コマンドで環境を作成し、自動デプロイを開始します。
-    ```ps
-    azd up
-    ```
-    以下の 3 つの質問に答えてください。Initializing a new project (azd init)
-    ```
-    ? Please enter a new environment name: 任意の環境名
-    ? Please select an Azure Subscription to use: 自分のサブスクリプション名
-    ? Please select an Azure location to use: デプロイ先リージョン(East US 推奨)
-    ```
 
-    - **重要**: 本サンプルで使用しているモデルを現在サポートしているリージョンは、米国東部(East US)または米国南中部(South Central US)です。最新のリージョン・モデル一覧は[こちら](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models)をご確認ください。
-1. **Creating/Updating resources** が表示されたら <kbd>Ctrl</kbd> + <kbd>C</kbd> を押下して、実行を中断します。
-1. ディレクトリに生成された `.azure/環境名/.env` の `AZURE_PRINCIPAL_ID` の値を、事前に控えておいた自分のオブジェクト ID に書き換えて、再び `azd up` コマンドを実行します。※ここは公式のサンプルでバグ修正中です。
-1. 以下のリソースがデプロイ完了するまでしばらく待ちます。結構時間がかかります。
-    ```
-    (✓) Done: Resource group: rg-環境名
-    (✓) Done: App Service plan: plan-random123
-    (✓) Done: Storage account: strandom123
-    (✓) Done: App Service: app-backend-random123
-    ```
+### 参考資料
 
-ローカルで実行:
-* `./app/start.cmd` を実行するか、"VS Code Task: Start App" を実行し、プロジェクトをローカルに起動します。
+Azure OpenAI Serviceについての技術詳細は、以下を参照してください。
 
-- **重要**: **デフォルトでは、このサンプルは Azure App Service に誰でもアクセスできる Web サービスとしてデプロイされます。デモデータだけならそれでよいですが、秘密情報が入ったファイルを使用しないようにしてください。情報漏洩のリスクがあります。Web サービスを使用せず、ローカル環境のみで使用する場合、App Service を停止もしくは削除してください。**
+* [ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search](https://github.com/nohanaga/azure-search-openai-demo)
 
-- **重要**: **AZURE RESOURCE COSTS** デフォルトでは、このサンプルは月額費用が発生する Azure App Service と Azure Cognitive Search リソースを作成します。このコストを回避したい場合は、infra フォルダ下のパラメータファイルを変更することで、それぞれを無料版に切り替えることができます (ただし、考慮すべき制限があります。たとえば、無料の Cognitive Search リソースは、1 つのサブスクリプションにつき最大 1 つまでです)。
+* [Azure OpenAI Developers セミナー](https://www.youtube.com/watch?v=tFgqdHKsOME)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/tFgqdHKsOME" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-### Quickstart
 
-* Azureの場合：azd によってデプロイされた Azure WebApp を開いてください。URL はazd の完了時に出力される（「Endpoint」として）か、Azure ポータルで確認することができます。このリソースが不要であれば、停止や削除ができます。
-* ローカルで実行: ブラウザで 127.0.0.1:5000 を開きます。
-
-ウェブアプリでは、
-* チャットや Q&A のコンテキストで、さまざまなトピックを試してみましょう。チャットでは、フォローアップの質問、明確化、回答の簡略化または詳細化を求めるなど、さまざまなことを試してみてください。
-* 引用とソースの探索
-* 「設定」をクリックすると、さまざまなオプションを試したり、プロンプトを調整したりすることができます。
+* [『ChatGPTによって描かれる未来とAI開発の変遷』日本マイクロソフト株式会社 蒲生 弘郷氏](https://www.youtube.com/watch?v=l9fpxtz22JU) 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/l9fpxtz22JU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><br>
 
 
 ## Resources
