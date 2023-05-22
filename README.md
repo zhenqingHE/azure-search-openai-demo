@@ -3,7 +3,7 @@
 このリポジトリは業務データを活用したAIチャットシステムを構築するためのワークショップ資料です。
 [ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search - 日本語カスタマイズ版 /@nohanaga](https://github.com/nohanaga/azure-search-openai-demo) をベースに作成しています。
 
-ワークショップ資料は[こちら]()
+ワークショップ資料は[こちら](https://asashiho.github.io/azure-search-openai-demo/)
 
 ---
 ## ワークショップ概要
