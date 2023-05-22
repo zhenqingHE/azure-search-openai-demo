@@ -14,7 +14,7 @@ from text import nonewlines
 class RetrieveThenReadApproach(Approach):
 
     template = \
-"あなたは日本の歴史に関する質問をサポートする教師アシスタントです。" + \
+"あなたは鉄道に関する質問をサポートする教師アシスタントです。" + \
 "質問者が「私」で質問しても、「あなた」を使って質問者を指すようにする。" + \
 "次の質問に、以下の出典で提供されたデータのみを使用して答えてください。" + \
 "各出典元には、名前の後にコロンと実際の情報があり、回答で使用する各事実には必ず出典名を記載します。" + \
@@ -22,16 +22,17 @@ class RetrieveThenReadApproach(Approach):
 """
 
 ###
-Question: '源頼朝の具体的な功績を教えてください'
+Question: '水素ハイブリッド電車とはなんですか?'
 
 Sources:
-info1.txt: 「本領安堵」「新恩給付」という豪族たちの最大の願望を実現し、坂東豪族の支持を集めた。
-info2.pdf: 1185年に設置されたこの守護地頭は源頼朝の代表的な政治政策です。
-info3.pdf: 源頼朝は、御家人の所領の保証、敵方の没収所領の給付を行いました。
-info4.pdf: 平氏追討を名目にした軍事的支配権の行使を通じて、鎌倉政権を確立しました。
+info1.txt: 水素をエネルギー源とする燃料電池は、高いエネルギー変換効率と環境負荷の少なさが特徴
+info2.pdf: 燃料電池自動車やバスの技術を鉄道車両の技術と融合・応用することにより、水素ハイブリッド電車を開発し、実証試験を始めた。
+info3.pdf: 燃料電池と蓄電池を組み合わせることで、瞬間最大出力を確保し、回生ブレーキエネルギーを有効に利用することができる。
+HYBARIの実証試験は、2020年に始まり、2024年まで続けられる予定である。
+info4.pdf: 実証試験では、エネルギー消費量やCO2排出量の削減効果を評価し、今後の鉄道車両のエコ技術開発に役立てる予定である。
 
 Answer:
-源頼朝は、御家人の所領の保証、敵方の没収所領の給付を行い、「本領安堵」「新恩給付」という豪族たちの最大の願望を実現し、坂東豪族の支持を集めた。[info1.txt][info3.pdf]  また、平氏追討を名目にした軍事的支配権の行使を通じて、鎌倉政権を確立し、[info4.txt] 守護地頭という重要な政策を確立しました。[info2.txt]
+水素を燃料とする燃料電池は、高いエネルギー変換効率と環境負荷の少なさが特徴[info1.txt]です。この技術を鉄道車両に応用し、水素ハイブリッド電車を開発し、実証試験を始めました。[info2.pdf] [info3.pdf] 
 
 ###
 Question: '{q}'?
@@ -56,13 +57,13 @@ Answer:
 
         if overrides.get("semantic_ranker"):
             r = self.search_client.search(q, 
-                                          filter=filter,
-                                          query_type=QueryType.SEMANTIC, 
-                                          query_language="ja-jp", 
-                                          query_speller="none", 
-                                          semantic_configuration_name="default", 
-                                          top=top, 
-                                          query_caption="extractive|highlight-false" if use_semantic_captions else None)
+                                        filter=filter,
+                                        query_type=QueryType.SEMANTIC, 
+                                        query_language="ja-jp", 
+                                        query_speller="none", 
+                                        semantic_configuration_name="default", 
+                                        top=top, 
+                                        query_caption="extractive|highlight-false" if use_semantic_captions else None)
         else:
             r = self.search_client.search(q, filter=filter, top=top)
         if use_semantic_captions:
