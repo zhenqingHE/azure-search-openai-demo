@@ -12,7 +12,7 @@ OpenAIによって開発された大規模な言語モデルGPTを活用する�
 
 ---
 
-このワークショップでは、 <span style="font-weight: bold; color: steelblue;"> 研究論文のサマリー/アジェンダを作成するチャットシステム</span> の作成を通して、Azure OpenAI Service やAzure Cognitive Searchなどの使い方やチャットシステムを社内に展開するためのWebアプリケーションの作成やAPI基盤の整備などの基礎を学びます。
+このワークショップでは、 <span style="font-weight: bold; color: steelblue;"> 研究論文の内容もとに適切な回答を作成するチャットシステム</span> の作成を通して、Azure OpenAI Service やAzure Cognitive Searchなどの使い方やチャットシステムを社内に展開するためのWebアプリケーションの作成やAPI基盤の整備などの基礎を学びます。
 
 このワークショップの特徴は次の2つです。
 
@@ -22,7 +22,7 @@ ChatGPT(gpt-35-turbo)モデルでトレーニングされたデータに基づ�
 
 - **回答の根拠を明確にする**
 
-ChatGPTの回答に「引用」をテキストに付加することで信頼できる応答を生成します
+ChatGPTの回答に「引用」をテキストに付加することで、より信頼できる応答を生成します
 
 
 ![](images/overview.png)
