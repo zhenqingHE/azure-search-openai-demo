@@ -230,6 +230,11 @@ Azureポータルを開き、「 **Form Recognizer** 」を選びます。
 リソースが作成できたら、「 **Form Recognizerスタジオ** 」 を起動します。
 ![](images/form9.png)
 
+
+次に、サブスクリプション/リソースグループ/Cognitive Service Resourceを設定してください。 
+ 
+![](images/form9-1.png)
+
 これはGUIでドキュメントの読み取りやレイアウトなどの構成を試すことができるツールです。
 
 ![](images/form10.png)
