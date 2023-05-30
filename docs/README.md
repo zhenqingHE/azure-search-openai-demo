@@ -178,10 +178,32 @@ az deployment sub create \
 
 ![](images/bicep.png)
 
-Azure環境の作成は40分程度かかります。コマンドはそのままで次の手順3に進んでください。
+Azure環境の作成は40分程度かかります。
 
 
-### 3. データセットのテキスト化
+## 📝講義
+
+Azureを利用するにあたり、セキュリティの設定は欠かせません。ここでは、Azure OpenAI Serviceはじめ、Azureの各種サービスを安全に利用するために知っておきたいネットワークセキュリティに関する講義を行います。
+
+資料:
+xxx
+
+アーキテクチャ:
+xxx
+
+
+
+# **Part2: 業務データを利用したデータセットの作成** 
+このパートでは、PDFなどの業務データをもとにデータセットを作成します。
+
+![](images/part2-overview.png)
+
+#### このパートのゴール
+* Azure Form Recognizer を使ってドキュメントから文字データの抽出ができる
+
+## 💻ハンズオン
+
+### 1. データセットのテキスト化
 ?>ワークショップに必要なデータはあらかじめ`data`ディレクトリに準備されています。そのためこの手順は飛ばして、Part2に進んでもかまいません。またお手持ちのデータをもとに検索を行いたい場合は、データを差し替えてください。
 
 Azure Form Recognizerは、Microsoft Azureのサービスの一つであり、OCR(Optical Character Recognition)と機械学習を利用してテキストを自動的に抽出し、構造化されたデータに変換するためのサービスです。
@@ -268,10 +290,10 @@ Form Recognizerを使って、身近なドキュメントの読み取りを試�
 [チュートリアル: Form Recognizer で Azure Logic Apps を使用する](https://learn.microsoft.com/ja-jp/azure/applied-ai-services/form-recognizer/tutorial-logic-apps?view=form-recog-2.1.0&viewFallbackFrom=form-recog-3.0.0)
 
 
-# **Part2: 業務データの検索システム構築** 
+# **Part3: 業務データの検索システム構築** 
 このパートではまず作成したテキストデータをもとに検索システムを作ります。次に、Azure OpenAI Serviceを使ってChatGPTで検索クエリーを作成し検索結果をもとに応答を返すREST APIを作成します。
 
-![](images/part2-overview.png)
+![](images/part3-overview.png)
 
 
 #### このパートのゴール
@@ -537,14 +559,14 @@ https://app-backend-xxx.azurewebsites.net/swagger.json
 
 
 
-# **Part3: API統合管理基盤の作成** 
+# **Part4: API統合管理基盤の作成** 
 Azure Cognitive Search/Azure OpenAI Service/AppServiceを使って検索エンジンから自然言語で応答を返すAPIが作成できました。これをWebブラウザから利用できるシングルページアプリケーションやモバイルアプリケーション、ローコードツールで開発したアプリケーションなどから便利に利用できるよう、APIの統合管理を行います。
 
 Azure API Managementは、APIを統合管理するサービスでAPIプロキシ/管理ポータル/ポリシー管理/分析などの機能を提供します。
 
 Azure API Managementを使うと、クライアントアプリケーションとの間でリクエストとレスポンスを中継することで、トラフィック制御や認証/キャッシングなどができます。また、どのぐらいAPIが利用されているかなどの情報を分析できたり、「APIを呼び出せるのは1分間に10回まで」などのポリシーを適用して流量を制御できます。
 
-![](images/part3-overview.png)
+![](images/part4-overview.png)
 
 #### このパートのゴール
 * API管理の必要性を理解する
@@ -565,7 +587,7 @@ API Managementで管理したいAPIを登録します。今回は[`OpenAPI`]を�
 
 ![](images/apim3.png)
 
-次に、[ **Create from OpenAPI specification** ]ダイアログが表示されるので、「 **OpenAPI specification** 」に以下の`swagger.json`ファイルを指定します。
+次に、[ **Create from OpenAPI specification** ]ダイアログが表示されるので、「 **OpenAPI specification** 」に以下の`swagger.json`ファイルを指定します。**`API URL suffix`** には「`api`」を指定します。
 
 ```bash
 https://app-backend-<your_name>.azurewebsites.net/swagger.json
@@ -638,7 +660,7 @@ API Managementは高機能なAPI管理サービスです。次のような課題
 
 
 
-# **Part4: フロントエンドアプリケーションの開発/デプロイ** 
+# **Part5: フロントエンドアプリケーションの開発/デプロイ** 
 
 いよいよ動作するAPIができたので、このAPIのにアクセスするチャットアプリを作成します。サンプルはTypeScriptとReactを使用した静的Webアプリケーションで、ソースコードは`/app/frontend`にあります。
 
@@ -647,7 +669,7 @@ Azure Static Web Appsは、フロントエンドの静的Webアプリケーシ�
 Azure Static Web Appsは、GitHubなどのソースコードリポジトリと連携して、自動的にビルド、デプロイ、ホスティングを行います。また、Azure FunctionsやAzure Logic AppsなどのサーバーレスバックエンドやAPI Managementと統合することも可能です。
 
 
-![](images/part4-overview.png)
+![](images/part5-overview.png)
 
 #### このパートのゴール
 * Static Web Appsを使ってフロントエンドアプリケーションを動かすことができる
