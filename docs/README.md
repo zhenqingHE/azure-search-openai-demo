@@ -147,8 +147,6 @@ az ad signed-in-user show --query id --out tsv
 ```bash
 cd infra
 
-az bicep upgrade
-
 az deployment sub create \
   -l eastus \
   --template-file main.bicep
