@@ -66,33 +66,47 @@ ChatGPTの回答に「引用」をテキストに付加することで、より�
 ## 💻ハンズオン
 ### 1. サンプルアプリケーションの準備
 
-ご自身のアカウントでGitHubを開き、[こちら](https://github.com/asashiho/azure-search-openai-demo)のサンプルコードを自分のリポジトリにForkします。
 
-次のコマンドを実行してForkしたリポジトリをクローンします。
+まず、ブラウザを開きご自身のアカウントでGitHubにアクセスします。そして、[こちら](https://github.com/asashiho/azure-search-openai-demo)のサンプルコードを自分のリポジトリにForkします。
+
+
+
+次に、Visual Studio Codeを起動します。 **[表示]-[拡張機能]** を選び、検索で **「Dev Containers」** を選び、この拡張機能を **[インストール]** をします。これはコンテナ環境で開発環境を動かすための拡張機能です。
+
+
+![](images/vscode-setup-1.png)
+
+
+ターミナルから次のコマンドを実行してForkしたリポジトリをクローンします。
 
 ```bash
 git clone https://github.com/<Your_GitHub_Name>/azure-search-openai-demo
 ```
 
 
-次にVisual Studio Codeを起動します。 **[表示]-[拡張機能]** を選び、検索で **「Dev Containers」** を選び、この拡張機能を **[インストール]** をします。これはコンテナ環境で開発環境を動かすための拡張機能です。
-
-
-![](images/vscode-setup-1.png)
-
-次に **[ファイル]-[フォルダを開く]** を選び **「azure-search-openai-demo」** フォルダを開いてください。
+次に **[ファイル]-[フォルダを開く]** を選び クローンした **「`azure-search-openai-demo`」** フォルダを開いてください。
 
 !>もし異なるフォルダを開いている場合、本ワークショップで必要な環境がセットアップされませんので、注意してください。
 
 ![](images/vscode-devcontainer1.png)
 
-サンプルフォルダを開いたら、Visual Studio Codeの左下の[`><`]アイコンをクリックして「`ReOpen in Container`」を選びます。
+サンプルフォルダを開いたら、Visual Studio Codeの左下の[`><`]アイコンをクリックして「`Reopen in Container`」を選びます。
 
 ![](images/vscode-devcontainer2.png)
 
-しばらくすると、[`>< Dev Container: Python3`]となり、次のようなターミナル(コマンドを実行する箇所)が表示されます。これは、開発に必要な環境一式がDockerコンテナとして起動できるVisual Studio CodeのDevContainersという機能を使っています。もしエラー等で起動できない場合は、ローカルPCでDockerコンテナが動作しているかを確認してください。
+ターミナルを確認すると、今回のワークショップで使用するライブラリ群がインストールされているのがわかります。
+
+![](images/vscode-devcontainer4.png)
+
+数分するとインストールが完了します。「`Done. Press any key to close the terminal.`」が表示されたら、任意のキーを押します。
+
+![](images/vscode-devcontainer5.png)
+
+
+すると[`>< Dev Container: Python3`]となり、次のようなターミナル(コマンドを実行する箇所)が表示されます。これは、開発に必要な環境一式がDockerコンテナとして起動できるVisual Studio CodeのDevContainersという機能を使っています。もしエラー等で起動できない場合は、Visual Studio Codeを再起動しローカルPCでDockerコンテナが動作しているかを確認してください。
 
 ![](images/vscode-devcontainer3.png)
+
 
 
 これで開発の準備ができました。
