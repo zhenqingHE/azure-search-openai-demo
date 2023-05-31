@@ -677,6 +677,8 @@ Azure Static Web Appsは、GitHubなどのソースコードリポジトリと�
 * APIキーの安全な取り扱い方法を知る
 
 ## 💻ハンズオン
+
+
 ### 1. Frontendのデプロイ
 
 Azureポータルを開き、「 **Web&Mobile** 」の中から「 **静的Webアプリ** 」を選びます。
@@ -793,6 +795,171 @@ AzureポータルからfrontendのURLを調べブラウザでアクセスしま�
 また余力がある人は、実際にアプリケーションを開発して動作確認をしてみてください。
 
 ![](images/powerapps-connector.png)
+
+# **付録A: フロントアプリのユーザ認証** 
+
+?> 以下の手順は、ワークショップで時間が余ったらお試しください。
+
+Static Web Appsには組み込み認証機能があり、Static Web Appsはデフォルトで次のプロバイダでの認証が有効になっています
+
+* Azure Active Directory
+* GitHub
+* Twitte
+
+組み込み認証の設定はサンプルリポジトリの`app/frontend/`にある「`staticwebapps.config.json`」で行います。
+
+`staticwebapps.config.json.sample`を`staticwebapps.config`にリネームしてください。
+
+
+次の設定ファイルでは、Azure ADでのユーザ認証を行い(=TwitterとGitHubの認証を無効化)、認証されていないユーザは認証画面に遷移するよう設定している例です。
+
+```staticwebapps.config
+{
+  "routes": [
+      {
+          "route": "/.auth/login/twitter",
+          "statusCode": 404
+      },
+      {
+          "route": "/.auth/login/github",
+          "statusCode": 404
+      },
+      {
+          "route": "/*",
+          "allowedRoles": [
+              "authenticated"
+          ]
+      }
+  ],
+  "responseOverrides": {
+      "401": {
+          "statusCode": 302,
+          "redirect": "/.auth/login/aad"
+      }
+  }
+}
+```
+
+Visual Studio Codeのターミナルから次のコマンドを実行し、`staticwebapps.config`をプッシュします。
+
+```bash
+git add app/frontend/staticwebapps.config
+git commit -m "Add: Authentication to Frontend"
+
+git push origin workshop
+```
+
+ふたたび、AzureポータルからfrontendのURLを確認しアクセスします。
+すると、Azure ADの認証ダイアログが表示されるので、ユーザIDとパスワードを入力します。
+
+![](images/swa-auth2.png)
+
+![](images/swa-auth3.png)
+
+認証が成功すると、アプリケーションの同意画面が表示されるので、「`Grant Consent`」をクリックしてください。
+
+![](images/swa-auth1.png)
+
+これで、認証されたユーザのみが利用できるチャットアプリケーションが作成できました。
+
+![](images/swa-auth4.png)
+
+
+
+#### (参考) ログインログアウト処理
+
+Static Web Appsでログイン処理とログアウト処理を行いたいときは`/.auth/login/<provider name>`および`/.auth/logout/<provider name>`に対してリンクを設定します。
+
+|       プロバイダ       |    ログインルート    |
+| ---------------------- | -------------------- |
+| Azure Active Directory | /.auth/login/aad     |
+| GitHub                 | /.auth/login/github  |
+| Twitter                | /.auth/login/twitter |
+
+たとえば、Azure ADの場合は次のようになります。
+```html
+<a href="/.auth/login/aad" role="button">Login</a>
+<a href="/.auth/logout/aad"role="button">Logout</a>
+```
+
+?> 公式ドキュメント: [Azure Static Web Apps の認証と承認](https://learn.microsoft.com/ja-jp/azure/static-web-apps/authentication-authorization?tabs=invitations)
+
+
+#### (参考) ユーザ情報の取得
+Static Web Appsでは`/.auth/me` を呼び出して認証されたユーザ情報が取得できます。
+
+`/.auth/me` にアクセスすると次のような情報が取得できます。
+```json
+{
+  "clientPrincipal": {
+    "identityProvider": "aad",
+    "userId": "xxxxxx",
+    "userDetails": "user@domain.co.jp",
+    "userRoles": [
+      "anonymous",
+      "authenticated"
+    ]
+  }
+}
+```
+
+または、次のコードでユーザ情報を取得できます。
+
+```javascript
+async function getUserInfo() {
+  const response = await fetch('/.auth/me');
+  const payload = await response.json();
+  const { clientPrincipal } = payload;
+  return clientPrincipal;
+}
+
+console.log(await getUserInfo());
+```
+
+
+?> 公式ドキュメント: [Azure Static Web Apps でのユーザー情報へのアクセス](https://learn.microsoft.com/ja-jp/azure/static-web-apps/user-information?tabs=javascript)
+
+
+#### (参考) ロールの管理
+Static Web Appsのアプリにアクセスするすべてのユーザーは、1つまたは複数のロールに属しています。 ユーザは、以下の2つの組み込みロールに属することができます。
+
+
+|     ロール     |                              説明                               |
+| -------------- | --------------------------------------------------------------- |
+| 匿名ロール     | すべてのユーザーは自動的に 「匿名」 ロールに属する              |
+| 認証済みロール | ログインしているすべてのユーザーは、「認証済み」 ロールに属する |
+
+
+組み込みロール以外にカスタム ロールをユーザーに割り当てることもできます。手順については、[ロール管理](https://learn.microsoft.com/ja-jp/azure/static-web-apps/authentication-authorization?tabs=invitations#role-management)を確認してください。
+
+
+#### (参考) カスタム認証
+Azure Static Web Apps が提供する組み込み認証では、Azureが管理するプロバイダー登録が使用されます。登録の柔軟性を高めるため、既定値をカスタム登録でオーバーライドできます。
+
+またカスタム認証により、OpenID Connect をサポートするカスタム プロバイダーを構成できます。この構成では、複数の外部プロバイダーを登録できます。
+
+ただし、カスタム登録を使用すると、事前構成済みのすべてのプロバイダーが無効になります。
+
+カスタム認証を行うときは、「`staticwebapps.config.json`」に次の設定を行います。
+
+```json
+  "auth": {
+    "identityProviders": {
+        "azureActiveDirectory": {
+            "registration": {
+                "openIdIssuer": "https://login.microsoftonline.com/<AAD_TenantID>",
+                "clientIdSettingName": "<AAD_ClientID>",
+                "clientSecretSettingName": "<AAD_Client_Secret>"
+            }
+        }
+    }
+  },
+```
+
+?> 公式ドキュメント: [Azure Static Web Apps でのカスタム認証](https://learn.microsoft.com/ja-jp/azure/static-web-apps/authentication-custom?tabs=aad)
+
+
+# **付録B: PowerAppsによるアプリ開発** 
 
 
 # 🗑Azureリソースの削除
