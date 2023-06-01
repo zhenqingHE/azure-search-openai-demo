@@ -18,7 +18,7 @@ OpenAIによって開発された大規模な言語モデルGPTを活用する�
 
 - **専門用語や業界独自のナレッジを検索できる**
 
-ChatGPT(gpt-35-turbo)モデルでトレーニングされたデータに基づいてテキストを生成するのではなく、企業内に閉じたデータのみから生成します
+ChatGPT(gpt-35-turbo)モデルでトレーニングされたデータに基づいてテキストを生成するのではなく、企業内に閉じたデータをもとに生成します
 
 - **回答の根拠を明確にする**
 
@@ -800,7 +800,7 @@ AzureポータルからfrontendのURLを調べブラウザでアクセスしま�
 
 ?> 以下の手順は、ワークショップで時間が余ったらお試しください。
 
-Static Web Appsには組み込み認証機能があり、Static Web Appsはデフォルトで次のプロバイダでの認証が有効になっています
+Static Web Appsには組み込み認証機能があり、デフォルトで次のIDプロバイダでの認証が有効になっています
 
 * Azure Active Directory
 * GitHub
@@ -881,8 +881,8 @@ Static Web Appsでログイン処理とログアウト処理を行いたいと�
 <a href="/.auth/login/aad" role="button">Login</a>
 <a href="/.auth/logout/aad"role="button">Logout</a>
 ```
-
-?> 公式ドキュメント: [Azure Static Web Apps の認証と承認](https://learn.microsoft.com/ja-jp/azure/static-web-apps/authentication-authorization?tabs=invitations)
+?>**参考情報**<br>
+ [Azure Static Web Apps の認証と承認](https://learn.microsoft.com/ja-jp/azure/static-web-apps/authentication-authorization?tabs=invitations)
 
 
 #### (参考) ユーザ情報の取得
@@ -917,7 +917,8 @@ console.log(await getUserInfo());
 ```
 
 
-?> 公式ドキュメント: [Azure Static Web Apps でのユーザー情報へのアクセス](https://learn.microsoft.com/ja-jp/azure/static-web-apps/user-information?tabs=javascript)
+?>**参考情報**<br>
+[Azure Static Web Apps でのユーザー情報へのアクセス](https://learn.microsoft.com/ja-jp/azure/static-web-apps/user-information?tabs=javascript)
 
 
 #### (参考) ロールの管理
@@ -956,10 +957,147 @@ Azure Static Web Apps が提供する組み込み認証では、Azureが管理�
   },
 ```
 
-?> 公式ドキュメント: [Azure Static Web Apps でのカスタム認証](https://learn.microsoft.com/ja-jp/azure/static-web-apps/authentication-custom?tabs=aad)
+?>**参考情報**<br>
+ [Azure Static Web Apps でのカスタム認証](https://learn.microsoft.com/ja-jp/azure/static-web-apps/authentication-custom?tabs=aad)
 
 
 # **付録B: PowerAppsによるアプリ開発** 
+?> 以下の手順は、ワークショップで時間が余ったらお試しください。また、PowerAppsでプレミアムコネクタが利用できるライセンスが必要になります。
+
+MicrosoftのPowerAppsは、ビジネスアプリケーションを構築するためのプラットフォームです。PowerAppsを使用すると、ドラッグアンドドロップ操作で簡単にアプリケーションを作成することができます。また、PowerAppsは、Microsoftの他のサービス(Azure/Office 365やDynamics 365)との連携が容易で、既存の業務システムとの親和性が高いアプリケーションの開発が短期間でできます。
+
+本ワークショップではフロントエンドアプリケーションとして、ReactによるWebアプリケーションを使って動作検証しましたが、OpenAI Serviceの呼び出し部分をAPI化しているため、PowerAppsのローコードアプリケーションからそのまま利用できます。
+
+![](images/powerapps-overview.png)
+
+#### カスタムコネクタの作成
+
+PowerAppsにログインし、作成したAPIを呼び出すためのカスタムコネクタを作成します。
+
+メニューから「**カスタムコネクタ**」をクリックします。
+![](images/powerapps-connector1.png)
+
+「 **+カスタムコネクタの新規作成** 」をクリックし、「 **Azureサービスから作成する(プレビュー)** 」を選びます。
+
+![](images/powerapps-connector2.png)
+
+
+接続したいAzureのサービスを選択するダイアログが表示されるので、必要な情報を選択します。ここでは、OpenAI Serviceに接続するAPIを管理するAPI Managementのリソースを指定します。
+
+![](images/powerapps-connector3.png)
+
+次にスキーマ/接続先のホスト/ベースURLを選択画面が表示されるので、内容が正しいかどうかを確認します。
+
+コネクタのアイコンは分かりやすい画像に変更してもかまいません。
+
+![](images/powerapps-connector4.png)
+
+次に、セキュリティ設定を行います。認証タイプは「**API キー**」とし、APIキーに以下の設定が設定されていることを確認します。
+
+![](images/powerapps-connector5.png)
+
+次に、APIのアクションを定義する画面が表示されます。内容を確認してテストに進みます。
+
+![](images/powerapps-connector6.png)
+
+
+テストを行うためには、「 **接続** 」を作成する必要があります。「 **+新しい接続** 」をクリックしてAPIキーを登録します。
+
+![](images/powerapps-connector7.png)
+
+ここで登録するAPIキーはAPI Managamentで発行されたキーです。「 **作成** 」ボタンをクリックして完了します。
+
+![](images/powerapps-connector8.png)
+
+これで、PowerAppsとAzureとの連携が完了しました。
+
+?>**参考情報**<br>
+[カスタム コネクタとは](https://learn.microsoft.com/ja-jp/connectors/custom-connectors/)
+
+#### アプリケーションの作成
+
+PowerAppsでアプリケーションを作成します。
+
+PowerAppsのトップページの「 **+作成** 」をクリックし、「 **空のアプリ** 」を選択します。
+
+![](images/powerapps1.png)
+
+
+どのような種類のアプリを作成するかを聞かれるので、「 **空のキャンパスアプリ** 」の「 **+作成** 」をクリックします。
+
+![](images/powerapps2.png)
+
+
+キャンパスアプリの名前(任意)を設定し、形式を選んで「 **+作成** 」をクリックします。
+
+![](images/powerapps3.png)
+
+これでアプリが作成できました。
+
+![](images/powerapps4.png)
+
+次に、カスタムコネクタ経由でAzure上のAPIを呼び出すための設定を行います。「 **データ** 」―「 **データの追加** 」をクリックします。
+
+![](images/powerapps-data1.png)
+
+
+ここでデータソースの選択画面が表示されるので、ご自身で作成したカスタムコネクタ「`OpenAI`」を選びます。
+
+![](images/powerapps-data2.png)
+
+APIを呼び出すコネクタがアプリケーションのデータソースとして追加されます。
+
+![](images/powerapps-data3.png)
+
+これで準備ができたので、アプリケーションにコンポーネントを追加します。
+
+「 **+挿入** 」―「 **テキスト入力** 」を選び、質問を入力するテキストボックスを追加します。
+
+![](images/powerapps5.png)
+
+![](images/powerapps6.png)
+
+同様の手順でAPIを呼び出すための「 **ボタン** 」も追加します。サイズやレイアウトはお好みで調整してください。
+
+![](images/powerapps7.png)
+
+
+次にボタンを押されたときの処理を記述します。ボタンを選択し、関数に以下を追加します。
+
+ClearCollect関数は、指定したコレクションのデータを全て削除した後、データを追加する関数です。
+
+ここでは`EnterprisesearchAPIusingAzureOpenAIService.postask()`を呼び出し、変数`answers`に結果を格納しています。
+
+なお、第二引数の`TextInput1.Text`はテキストボックスに入力された値(=OpenAIへの質問)のテキストデータをセットしています。
+
+```bash
+ClearCollect(answers,EnterprisesearchAPIusingAzureOpenAIService.postask("rtr",TextInput1.Text));
+```
+
+![](images/powerapps8.png)
+
+次に結果を表示するコンポーネントを追加します。APIからのレスポンスは`answers`に格納されているため、これを表示するため「 **空の垂直ギャラリー** 」を追加します。ここにテキストラベルを追加して、データソースとして「`answers`」を選択します。
+
+![](images/powerapps12.png)
+
+フィールドをクリックし、追加したテキストラベルに`answers`を設定します。なお、サイズなどはお好みで調整してください。
+
+![](images/powerapps14.png)
+
+これでアプリケーションの作成は終わりましたので、動作確認を行います。「 **アプリのプレビュー** 」をクリックします。
+
+![](images/powerapps13.png)
+
+テキストボックスに質問を入力し、ボタンをクリックすると垂直ギャラリーに結果が表示されるのが分かります。
+
+![](images/powerapps15.png)
+
+PowerAppsでは各コンポーネントのレイアウトやデザイン、サイズなどをGUIから自由に設定できます。またコンポーネントのアクションもExcel関数を書くイメージで作成できますので、自由にカスタマイズしてください。
+
+![](images/powerapps16.png)
+
+?>**参考情報**<br>
+[Power Appsとは](https://learn.microsoft.com/ja-jp/power-apps/powerapps-overview)
 
 
 # 🗑Azureリソースの削除
